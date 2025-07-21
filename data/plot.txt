@@ -1,0 +1,2 @@
+# 绘制身高,绘制体重,绘制BMI
+False,True,True
