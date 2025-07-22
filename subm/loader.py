@@ -68,9 +68,9 @@ def load_plots(filename):
                 
                 # 解析数据
                 try:
-                    height = (parts[0].strip() == "True")
-                    weight = (parts[1].strip() == "True")
-                    bmi    = (parts[1].strip() == "True")
+                    height = (parts[0].strip().lower() == "true")
+                    weight = (parts[1].strip().lower() == "true")
+                    bmi    = (parts[1].strip().lower() == "true")
                 except ValueError as e:
                     print(f"解析错误: {line} - {str(e)}")
     except Exception as e:

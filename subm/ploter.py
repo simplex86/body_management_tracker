@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import math
 
 dates = []
 heights = {"data":[], "plot":False}
-weights = {"data":[], "plot":False}
+weights = {"data":None, "plot":False}
 bmis = {"data":[], "plot":False}
 
 pnum = 0
@@ -53,19 +54,24 @@ def plot_heights():
     global rnum
     rnum += 1
     
+    hdata = heights["data"]
+
     ax1 = plt.subplot(pnum, 1, rnum)
-    ax1.plot(dates, heights["data"], 'p-', color=height_color, linewidth=1.5, markersize=6, label='身高')
+    ax1.plot(dates, hdata, 'p-', color=height_color, linewidth=1.5, markersize=6, label='身高')
 
     # 添加身高数据标签（蓝色，数据点正上方）
-    for i, (date, height) in enumerate(zip(dates, heights["data"])):
+    for i, (date, height) in enumerate(zip(dates, hdata)):
         ax1.annotate(f"{height}", 
                     (date, height), 
-                    xytext=(0, 15),
+                    xytext=(0, 10),
                     textcoords='offset points',
                     fontsize=11,
                     ha='center',
                     va='center',
                     color=height_color)
+
+    minv = math.floor(min(hdata)) - 2
+    maxv = math.ceil(max(hdata)) + 2
 
     # 设置身高图表格式 - 添加日期时间标签
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m.%d'))
@@ -73,7 +79,7 @@ def plot_heights():
     ax1.set_ylabel('身高 (cm)', fontsize=13, color=height_color, labelpad=15)
     ax1.tick_params(axis='y', colors=height_color)
     ax1.set_title('身高变化趋势', fontsize=15, pad=15)
-    ax1.set_ylim(65.5, 71.5)
+    ax1.set_ylim(minv, maxv)
     ax1.grid(True, linestyle='--', alpha=0.6)
     ax1.legend(loc='upper right')
 
@@ -95,20 +101,25 @@ def plot_weights():
     
     global rnum
     rnum += 1
+
+    wdata = weights["data"]
     
     ax1 = plt.subplot(pnum, 1, rnum)
-    ax1.plot(dates, weights["data"], 'o-', color=weight_color, linewidth=1.5, markersize=6, label='体重')
+    ax1.plot(dates, wdata, 'o-', color=weight_color, linewidth=1.5, markersize=6, label='体重')
 
     # 添加体重数据标签（蓝色，数据点正上方）
-    for i, (date, weight) in enumerate(zip(dates, weights["data"])):
+    for i, (date, weight) in enumerate(zip(dates, wdata)):
         ax1.annotate(f"{weight}", 
                     (date, weight), 
-                    xytext=(0, 15),
+                    xytext=(0, 10),
                     textcoords='offset points',
                     fontsize=11,
                     ha='center',
                     va='center',
                     color=weight_color)
+    
+    minv = math.floor(min(wdata)) - 1
+    maxv = math.ceil(max(wdata)) + 1
 
     # 设置体重图表格式 - 添加日期时间标签
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m.%d'))
@@ -116,7 +127,7 @@ def plot_weights():
     ax1.set_ylabel('体重 (kg)', fontsize=13, color=weight_color, labelpad=15)
     ax1.tick_params(axis='y', colors=weight_color)
     ax1.set_title('体重变化趋势', fontsize=15, pad=15)
-    ax1.set_ylim(65.5, 71.5)
+    ax1.set_ylim(minv, maxv)
     ax1.grid(True, linestyle='--', alpha=0.6)
     ax1.legend(loc='upper right')
 
@@ -136,6 +147,8 @@ def plot_bmis():
     if (bmis["plot"] == False):
         return
     
+    mdata = bmis["data"]
+    
     global rnum
     rnum += 1
 
@@ -146,25 +159,27 @@ def plot_bmis():
     healthy_max = 24.0
 
     # 设置BMI坐标轴范围
-    ax2.set_ylim(16.5, 26.0)
+    minv = min(16.5, math.floor(min(mdata)) - 1)
+    maxv = max(26, math.ceil(max(mdata)) + 1)
+    ax2.set_ylim(minv, maxv)
 
     # 绘制健康区域（18.5-24.0）
     ax2.axhspan(healthy_min, healthy_max, color='#a5d6a7', alpha=0.4)
 
-    # 绘制不健康区域（16.5-18.5和24.0-26.0）
-    ax2.axhspan(16.5, healthy_min, color='#ffcdd2', alpha=0.3)
-    ax2.axhspan(healthy_max, 26.0, color='#ffcdd2', alpha=0.3)
+    # 绘制不健康区域（minv-18.5和24.0-maxv）
+    ax2.axhspan(minv, healthy_min, color='#ffcdd2', alpha=0.3)
+    ax2.axhspan(healthy_max, maxv, color='#ffcdd2', alpha=0.3)
 
     # 健康边界线
     ax2.axhline(healthy_min, color='#4caf50', linestyle='--', alpha=0.7, linewidth=1.0)
     ax2.axhline(healthy_max, color='#4caf50', linestyle='--', alpha=0.7, linewidth=1.0)
 
     # 绘制BMI折线（橙色）
-    ax2.plot(dates, bmis["data"], 's-', color=bmi_color, linewidth=1.5, markersize=6, label='BMI')
+    ax2.plot(dates, mdata, 's-', color=bmi_color, linewidth=1.5, markersize=6, label='BMI')
 
     # 添加BMI数据标签（橙色，数据点正下方）
     c_bmi_color = bmi_color
-    for i, (date, bmi) in enumerate(zip(dates, bmis["data"])):
+    for i, (date, bmi) in enumerate(zip(dates, mdata)):
         if bmi > healthy_max or bmi< healthy_min:
             c_bmi_color = '#d32f2f'
         else:
@@ -172,7 +187,7 @@ def plot_bmis():
 
         ax2.annotate(f"{bmi:.1f}", 
                     (date, bmi), 
-                    xytext=(0, 15),
+                    xytext=(0, 10),
                     textcoords='offset points',
                     fontsize=11,
                     ha='center',

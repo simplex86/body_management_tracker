@@ -2,8 +2,8 @@ import subm.loader as loader
 import subm.ploter as ploter
 import subm.helper as helper
 
-data_filename = "./data/data.txt"
-plot_filename = "./data/plot.txt"
+data_filename = "./data.txt"
+plot_filename = "./plot.txt"
 
 def main():
     date_data, height_data, weight_data = loader.load_datas(data_filename)
